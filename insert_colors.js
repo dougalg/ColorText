@@ -103,18 +103,22 @@ function color_obj_from_coords(inner, outer, letter) {
     return svg;
 }
 
-function color_from_letter(letter) {
-    var coords = color_map[letter];
-    if (coords !== undefined) {
-        return color_obj_from_coords(coords[0], coords[1], letter);
+myfilter=function(node) {
+    if (node.nodeType==Node.ELEMENT_NODE) {
+        if (node.tagName=="SCRIPT" || node.tagName=="IMG") {
+            return NodeFilter.FILTER_REJECT;
+        } else {
+            return NodeFilter.FILTER_ACCEPT;
+        }
+    } else if (node.nodeType == Node.TEXT_NODE) {
+        return NodeFilter.FILTER_ACCEPT;
     }
-    return letter;
-}
+};
 
 var treeWalker = document.createTreeWalker(
   document.body,
-  NodeFilter.SHOW_TEXT,
-  { acceptNode: function(node) { return NodeFilter.FILTER_ACCEPT; } },
+  NodeFilter.SHOW_ALL,
+  myfilter,
   false
 );
 
@@ -127,39 +131,39 @@ while(treeWalker.nextNode()) {
     }
 }
 
+function catchInsertBefore(child, el) {
+    try {
+        el.parentNode.insertBefore(child, el);
+    } catch(e) {
+        console.log(e);
+        console.log('Could not append: "'+child+'" to "'+el.parentNode);
+    }
+}
+
 for (var j=0; j<nodes.length; j++) {
     var el = nodes[j],
-        temp = el.nodeValue.toLowerCase(),
-        len = temp.length,
-        out = [];
-    try {
-        for (var i=0; i<len; i++) {
-            var circle = color_from_letter(temp[i]);
-            el.parentNode.insertBefore(circle, el);
+        text = el.nodeValue.toLowerCase(),
+        text = text.trim(),
+        circle,
+        coords,
+        letter,
+        outString='',
+        txtNode;
+
+    for (var i=0; i<text.length; i++) {
+        letter = text[i];
+        coords = color_map[letter];
+        if ((coords !== undefined || i==text.length-1) && outString !== '') {
+            txtNode = document.createTextNode(outString);
+            catchInsertBefore(txtNode, el);
+            outString = '';
         }
-        el.parentNode.removeChild(el);
-    } catch(err) {
-        console.log('Could not convert: "'+el.nodeValue+'"');
-    }
-}
-
-/*
-var all_elements = document.getElementsByName("*");
-var num_elements = all_elements.length;
-alert(num_elements);
-
-for (var j=0; j<num_elements; j++) {
-    var el = all_elements[i];
-    if (el.nodeType == Node.TEXT_NODE && el.nodeValue.trim() !== '') {
-        var temp = el.nodeValue.toLowerCase();
-        var len = temp.length;
-        var out = [];
-
-        for (var i=0; i<len; i++) {
-            var circle = color_from_letter(temp[i]);
-            el.parentNode.insertBefore(circle, el);
+        if (coords !== undefined) {
+            circle = color_obj_from_coords(coords[0], coords[1], letter);
+            catchInsertBefore(circle, el);
+        } else {
+            outString += letter;
         }
-        el.parentNode.removeChild(el);
     }
+    el.parentNode.removeChild(el);
 }
-*/
