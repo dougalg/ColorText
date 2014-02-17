@@ -166,7 +166,6 @@ function check_quote(letter) {
 for (var j=0; j<nodes.length; j++) {
     var el = nodes[j],
         text = el.nodeValue.toLowerCase(),
-        text = text.trim(),
         circle,
         coords,
         letter,
