@@ -75,6 +75,9 @@ color_map = {
 // Maps the table coordinates to ordered colors
 color_defs = Array('#ffffff', '#000000', '#E22026', '#B64B9B', '#5872B7', '#65CAE2', '#21AC4A', '#D6D624', '#D17C29');
 
+// Keeps track of if a quotation mark has been encountered yet
+var first_quote = true;
+
 function color_obj_from_coords(inner, outer, letter) {
 
     var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
@@ -140,6 +143,26 @@ function catchInsertBefore(child, el) {
     }
 }
 
+function check_quote(letter) {
+    if (letter == "“") {
+        first_quote = false;
+        return "\"_start";
+    } else if (letter == "”") {
+        first_quote = true;
+        return "\"_end";
+    }
+    if (letter == "\"") {
+        if (first_quote === true) {
+            letter = "\"_start";
+        } else {
+            letter = "\"_end";
+        }
+        first_quote = !first_quote;
+        console.log(first_quote);
+    }
+    return letter;
+}
+
 for (var j=0; j<nodes.length; j++) {
     var el = nodes[j],
         text = el.nodeValue.toLowerCase(),
@@ -151,7 +174,7 @@ for (var j=0; j<nodes.length; j++) {
         txtNode;
 
     for (var i=0; i<text.length; i++) {
-        letter = text[i];
+        letter = check_quote(text[i]);
         coords = color_map[letter];
         if ((coords !== undefined || i==text.length-1) && outString !== '') {
             txtNode = document.createTextNode(outString);
