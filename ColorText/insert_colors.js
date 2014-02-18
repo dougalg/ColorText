@@ -81,9 +81,10 @@ var first_quote = true;
 function color_obj_from_coords(inner, outer, letter) {
 
     var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-    svg.setAttribute('width', '16');
-    svg.setAttribute('height', '16');
-    svg.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:xlink", "http://www.w3.org/1999/xlink");
+    svg.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns", "http://www.w3.org/2000/svg");
+    svg.setAttribute('version', '1.1');
+    svg.setAttribute('viewBox', '0 0 41 41');
+    svg.setAttribute('class', 'color_text_svg_element');
 
     var g = document.createElementNS("http://www.w3.org/2000/svg", "g");
     var title = document.createElementNS("http://www.w3.org/2000/svg", "title");
@@ -92,11 +93,11 @@ function color_obj_from_coords(inner, outer, letter) {
     // "circle" may be any tag name
     var circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
     // Set any attributes as desired
-    circle.setAttribute("cx", 8);
-    circle.setAttribute("cy", 8);
-    circle.setAttribute("r",  5);
+    circle.setAttribute("cx", 20);
+    circle.setAttribute("cy", 20);
+    circle.setAttribute("r",  16);
     circle.setAttribute("fill", color_defs[outer]);
-    circle.setAttribute("stroke-width", 4);
+    circle.setAttribute("stroke-width", 8);
     circle.setAttribute("stroke", color_defs[inner]);
 
     g.appendChild(title);
