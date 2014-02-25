@@ -1,7 +1,7 @@
 #Color Text#
 
-The Color Text javascript replaces ASCII text with SVG colored circles.
-For a full lookup conversion table of characters to colors, you can [see here](http://colortext.tfiaa.com/#lookup).
+The Color Text Chrome Plugin (via the included js file) replaces ASCII text with SVG colored circles.
+For a full lookup conversion table of characters to colors, you can [see http://colortext.tfiaa.com](http://colortext.tfiaa.com/#lookup).
 This is just a for-fun project with no real use, but to help me practice my JS, and learn how to make a Chrome Extension.
 
 ##Characters##
