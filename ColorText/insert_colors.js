@@ -151,6 +151,8 @@ function check_quote(letter) {
     } else if (letter == "”") {
         first_quote = true;
         return "\"_end";
+    } else if (letter == "’") {
+        return "'";
     }
     if (letter == "\"") {
         if (first_quote === true) {

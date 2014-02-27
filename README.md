@@ -11,6 +11,10 @@ In addition the letters are loosely organized by common phonemic correspondance 
 ie: A red border signals a voiced consonant, vowels have yellow borders, and a dark blue center is typically bilabial. Of course, since letters do not fully correspond to phonemes this is only a loose organization.
 
 ##Version Info##
+V 1.3
+- Now displays links with a big fat underline
+- Now maps ’ to '
+
 V 1.2
 - Now matches font size
 - Transliterates quotation marks correctly
@@ -20,5 +24,4 @@ V 1.1
 - Probably no longer removes unicode text from websites
 
 ##Possible To Dos##
-- Make links show up properly
 - Add missing characters

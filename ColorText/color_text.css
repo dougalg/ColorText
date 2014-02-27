@@ -1,4 +1,22 @@
 svg.color_text_svg_element {
     width: 1em;
     height: 1em;
+    margin-bottom: 5px;
+}
+
+a > svg.color_text_svg_element {
+    border-bottom: 5px solid #0007DE;
+    margin-bottom: 0px;
+}
+
+a:active > svg.color_text_svg_element {
+    border-bottom: 5px solid #7300DE;
+}
+
+a:visited > svg.color_text_svg_element {
+    border-bottom: 5px solid #00DEDA;
+}
+
+a:hover > svg.color_text_svg_element {
+    border-bottom: 5px solid #DE0000;
 }
