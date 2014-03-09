@@ -83,6 +83,7 @@ function color_obj_from_coords(inner, outer, letter) {
     var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
     svg.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns", "http://www.w3.org/2000/svg");
     svg.setAttribute('version', '1.1');
+    // Use the viewbox to allow resizing based on ems etc.
     svg.setAttribute('viewBox', '0 0 41 41');
     svg.setAttribute('class', 'color_text_svg_element');
 
@@ -107,6 +108,8 @@ function color_obj_from_coords(inner, outer, letter) {
     return svg;
 }
 
+// A filter to filter out some types elements that we don't want to transliterate
+// This could be a longer list...
 myfilter=function(node) {
     if (node.nodeType==Node.ELEMENT_NODE) {
         if (node.tagName=="SCRIPT" || node.tagName=="IMG") {
@@ -121,20 +124,21 @@ myfilter=function(node) {
 
 var treeWalker = document.createTreeWalker(
   document.body,
-  NodeFilter.SHOW_ALL,
+  NodeFilter.SHOW_TEXT,
   myfilter,
   false
 );
 
 var nodes = [];
-
 while(treeWalker.nextNode()) {
     var el = treeWalker.currentNode;
-    if (el.nodeType == Node.TEXT_NODE && el.nodeValue.trim() !== '') {
+    if (el.nodeValue.trim() !== '') {
         nodes.push(el);
     }
 }
 
+// Error logging
+// Make sure the program doesn't hang because of an insertion error
 function catchInsertBefore(child, el) {
     try {
         el.parentNode.insertBefore(child, el);
@@ -144,6 +148,8 @@ function catchInsertBefore(child, el) {
     }
 }
 
+// Replaces curly quotes with ASCII quotes
+// Also attempts to keep track of initial and final quotation marks
 function check_quote(letter) {
     if (letter == "“") {
         first_quote = false;
@@ -154,6 +160,9 @@ function check_quote(letter) {
     } else if (letter == "’") {
         return "'";
     }
+
+    // Keep track of if it is a first or last quote
+    // Returns appropriate value for color lookup
     if (letter == "\"") {
         if (first_quote === true) {
             letter = "\"_start";
@@ -161,28 +170,37 @@ function check_quote(letter) {
             letter = "\"_end";
         }
         first_quote = !first_quote;
-        console.log(first_quote);
     }
     return letter;
 }
 
+// Loop over all the nodes
+// Replace their text content with colored circles
 for (var j=0; j<nodes.length; j++) {
     var el = nodes[j],
         text = el.nodeValue.toLowerCase(),
         circle,
         coords,
         letter,
-        outString='',
+        outString='',   // Build up a string of non-transliterable chars
         txtNode;
 
+    // Loop the strings as characters, create a new text node for insertion
+    // of characters we can't transliterate; build it up and insert only when
+    // necessary
     for (var i=0; i<text.length; i++) {
         letter = check_quote(text[i]);
         coords = color_map[letter];
+
+        // If we've run out of non-transliterable characters append them to the
+        // node and reset outString
         if ((coords !== undefined || i==text.length-1) && outString !== '') {
             txtNode = document.createTextNode(outString);
             catchInsertBefore(txtNode, el);
             outString = '';
         }
+
+        // If we can create a circle, do so, otherwise add the char to the text node
         if (coords !== undefined) {
             circle = color_obj_from_coords(coords[0], coords[1], letter);
             catchInsertBefore(circle, el);
